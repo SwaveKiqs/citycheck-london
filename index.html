@@ -1577,16 +1577,19 @@ async function loadSnapshot(){
 function toggleHomeRanking(){
   const rp=document.getElementById('home-ranking-panel');
   if(!rp) return;
-  const isOpen=rp.classList.contains('open');
-  if(isOpen){ rp.classList.remove('open'); }
-  else{
-    rp.classList.add('open');
+  const isClosed=rp.style.transform==='translateX(100%)';
+  if(isClosed){
+    rp.style.transform='';
     rp.addEventListener('touchstart',function(e){e.stopPropagation();},{passive:true});
     rp.addEventListener('touchmove',function(e){e.stopPropagation();},{passive:true});
-    rp.addEventListener('wheel',function(e){e.stopPropagation();e.preventDefault();rp.querySelector('.recap-list').scrollTop+=e.deltaY;},{passive:false});
+    rp.addEventListener('wheel',function(e){e.stopPropagation();e.preventDefault();
+      var rl=rp.querySelector('.recap-list');if(rl)rl.scrollTop+=e.deltaY;},{passive:false});
     rHomeRanking();
+  } else {
+    rp.style.transform='translateX(100%)';
   }
 }
+
 
 function rHomeRanking(){
   const list=document.getElementById('home-ranking-list');
