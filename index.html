@@ -35,7 +35,7 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:var
 .logo em{color:var(--accent);font-style:normal;font-weight:700}
 .ep{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:1px}
 .top-right{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
-.top-avg{font-family:var(--fd);font-size:26px;color:var(--gold);line-height:1}
+.top-avg{font-family:var(--fd);font-size:clamp(16px,4vw,26px);color:var(--gold);line-height:1}
 .top-lbl{font-size:9px;color:var(--muted);letter-spacing:.5px}
 
 /* NAV */
@@ -113,7 +113,8 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:var
 .go-btn:disabled{background:#1e1e1e;color:#3a3a3a;cursor:default}
 .recap-panel{position:absolute;top:0;right:0;bottom:0;z-index:500;width:190px;background:rgba(22,22,22,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-left:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;padding:14px 0 0;touch-action:none;overscroll-behavior:contain;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1)}
 .recap-panel.open{transform:translateX(0)}
-@media(min-width:600px){.recap-panel{transform:translateX(0)}}
+@media(min-width:768px){.recap-panel{transform:translateX(0)}}
+.home-ranking-always{transform:translateX(0)!important}
 .recap-title{font-family:var(--fd);font-size:14px;letter-spacing:1.5px;color:var(--muted);padding:0 12px 10px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
 .recap-count{font-family:var(--fd);font-size:16px;color:var(--gold)}
 .recap-list{flex:1;overflow-y:scroll;padding:0 8px 12px;touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;min-height:0;position:relative}
@@ -251,12 +252,12 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:var
       </div>
       <div style="width:1px;height:22px;background:rgba(222,214,196,.25)"></div>
       <div onclick="goHome()" style="cursor:pointer">
-        <div class="logo" style="font-size:18px;letter-spacing:3px;color:#DED6C4">CITY<em style="color:#576E54">CHECK</em></div>
-        <div class="ep">Ep. 01 — Londres</div>
+        <div class="logo" style="font-size:clamp(13px,3vw,18px);letter-spacing:2px;color:#DED6C4;white-space:nowrap">CITY<em style="color:#576E54">CHECK</em></div>
+        <div class="ep" style="white-space:nowrap;font-size:9px">Ep. 01 — Londres</div>
       </div>
     </div>
     <div id="admin-bar" style="display:none;flex-shrink:0">
-      <button id="publish-btn" onclick="publishSnapshot()" style="padding:6px 14px;background:#576E54;color:#DED6C4;border:none;border-radius:20px;font-family:var(--fb);font-size:11px;font-weight:700;cursor:pointer;letter-spacing:1px">PUBLIER</button>
+      <button id="publish-btn" onclick="publishSnapshot()" style="padding:5px 10px;background:#576E54;color:#DED6C4;border:none;border-radius:20px;font-family:var(--fb);font-size:10px;font-weight:700;cursor:pointer;letter-spacing:.5px;white-space:nowrap">PUBLIER</button>
     </div>
     <div class="top-right">
       <div class="top-avg" id="top-avg"></div>
@@ -266,6 +267,7 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:var
   <div id="spectator-nav" style="display:none;background:#14241A;border-bottom:1px solid rgba(222,214,196,.1);flex-direction:row;flex-shrink:0">
     <button onclick="specNav('map')" class="spec-nb on" style="flex:1;padding:10px 0;background:none;border:none;color:#9ab89a;font-family:var(--fb);font-size:11px;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;position:relative">Carte</button>
     <button onclick="specNav('notes')" class="spec-nb" style="flex:1;padding:10px 0;background:none;border:none;color:#9ab89a;font-family:var(--fb);font-size:11px;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;position:relative">Notes</button>
+    <button onclick="specNav('top')" class="spec-nb" style="flex:1;padding:10px 0;background:none;border:none;color:#9ab89a;font-family:var(--fb);font-size:11px;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;position:relative">Top</button>
   </div>
   <div class="nav">
     <button class="nb on" onclick="nav('home')">Accueil</button>
@@ -277,6 +279,7 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:var
   <div id="spectator-nav" style="display:none;background:#14241A;border-bottom:1px solid rgba(222,214,196,.1);flex-direction:row;flex-shrink:0">
     <button onclick="specNav('map')" class="spec-nb on" style="flex:1;padding:10px 0;background:none;border:none;color:#9ab89a;font-family:var(--fb);font-size:11px;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;position:relative">Carte</button>
     <button onclick="specNav('notes')" class="spec-nb" style="flex:1;padding:10px 0;background:none;border:none;color:#9ab89a;font-family:var(--fb);font-size:11px;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;position:relative">Notes</button>
+    <button onclick="specNav('top')" class="spec-nb" style="flex:1;padding:10px 0;background:none;border:none;color:#9ab89a;font-family:var(--fb);font-size:11px;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;position:relative">Top</button>
   </div>
   <div class="content">
 
@@ -300,7 +303,7 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:var
           <span class="badge" id="home-ranking-badge" style="background:#576E54">0</span>
         </button>
         <!-- Home ranking panel -->
-        <div class="recap-panel" id="home-ranking-panel" style="z-index:600">
+        <div class="recap-panel home-ranking-always" id="home-ranking-panel" style="z-index:600">
           <div class="recap-title">
             TOP NOTES
             <button onclick="toggleHomeRanking()" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:0;line-height:1">×</button>
@@ -1457,7 +1460,13 @@ async function enterSpectator(){
   if(m) m.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#576E54;font-size:14px">Chargement...</div>';
   const pub=await loadSnapshot();
   if(pub){
-    setTimeout(()=>{ initHomeMap(); rHome(); rScore(); },200);
+    setTimeout(function(){
+      initHomeMap(); rHome(); rScore();
+      rHomeRanking();
+      // Show ranking panel in spectator too
+      var rp=document.getElementById('home-ranking-panel');
+      if(rp) rp.classList.add('open');
+    },200);
   } else {
     if(m) m.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#576E54;font-size:13px;text-align:center;padding:40px">Aucun snapshot publié.<br>Reviens bientôt !</div>';
   }
@@ -1481,11 +1490,20 @@ function showSpectatorUI(){
 }
 
 function specNav(p){
-  document.querySelectorAll('.spec-nb').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.spec-nb').forEach(function(b){b.classList.remove('on');});
   event.target.classList.add('on');
-  document.querySelectorAll('.panel').forEach(el=>el.classList.remove('on'));
-  if(p==='map'){ document.getElementById('home-panel').classList.add('on'); setTimeout(()=>{ if(homeMap)homeMap.invalidateSize(); },80); }
+  document.querySelectorAll('.panel').forEach(function(el){el.classList.remove('on');});
+  if(p==='map'){ document.getElementById('home-panel').classList.add('on'); setTimeout(function(){ if(homeMap)homeMap.invalidateSize(); },80); }
   if(p==='notes'){ document.getElementById('score-panel').classList.add('on'); rScore(); }
+  if(p==='top'){
+    document.getElementById('home-panel').classList.add('on');
+    setTimeout(function(){
+      if(homeMap)homeMap.invalidateSize();
+      rHomeRanking();
+      var rp=document.getElementById('home-ranking-panel');
+      if(rp){rp.classList.add('open'); if(window.innerWidth<768) rp.style.transform='translateX(0)';}
+    },80);
+  }
 }
 
 // ─── SUPABASE SYNC ────────────────────────────────────────
