@@ -548,7 +548,10 @@ function sv(){
 
 // ─── NAV ─────────────────────────────────────────────────
 function goHome(){
-  if(isSpectator){ specNav('map'); return; }
+  if(isSpectator){
+    document.getElementById('spectator-overlay').style.display='flex';
+    return;
+  }
   nav('home');
 }
 function nav(p){
