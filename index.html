@@ -636,20 +636,20 @@ function rSidebar(){
     <div class="fs-divider"></div>
     <div class="fs-section">
       <div class="fs-cat" onclick="toggleGroupFilter('shopping')">
-        <div class="fs-cat-dot" style="background:#576E54"></div>
+        <div class="fs-cat-dot" style="background:#ff4e1a"></div>
         <div class="fs-cat-name">Shopping</div>
         <div class="fs-cat-count">${shoppingCount}</div>
         <div class="fs-check${shopOn?' on':''}" id="fsc-shopping">${shopOn?'✓':(shopIndeterminate?'–':'')}</div>
       </div>
       <div class="fs-sub">
         <div class="fs-subcat" onclick="toggleFilter('retail')">
-          <div class="fs-subcat-pip" style="background:#576E54"></div>
+          <div class="fs-subcat-pip" style="background:#2e7eff"></div>
           <div class="fs-subcat-name">Retail</div>
           <div class="fs-cat-count" style="margin-right:6px;font-size:10px">${retailCount}</div>
           <div class="fs-subcheck${retailOn?' on':''}">✓</div>
         </div>
         <div class="fs-subcat" onclick="toggleFilter('resell')">
-          <div class="fs-subcat-pip" style="background:#DED6C4"></div>
+          <div class="fs-subcat-pip" style="background:#ff4e1a"></div>
           <div class="fs-subcat-name">Resell</div>
           <div class="fs-cat-count" style="margin-right:6px;font-size:10px">${resellCount}</div>
           <div class="fs-subcheck${resellOn?' on':''}">✓</div>
@@ -659,7 +659,7 @@ function rSidebar(){
     <div class="fs-divider"></div>
     <div class="fs-section">
       <div class="fs-cat" onclick="toggleFilter('food')">
-        <div class="fs-cat-dot" style="background:#7A9977"></div>
+        <div class="fs-cat-dot" style="background:#ffaa00"></div>
         <div class="fs-cat-name">Food</div>
         <div class="fs-cat-count">${foodCount}</div>
         <div class="fs-check${foodOn?' on':''}">${foodOn?'✓':''}</div>
@@ -668,7 +668,7 @@ function rSidebar(){
     <div class="fs-divider"></div>
     <div class="fs-section">
       <div class="fs-cat" onclick="toggleFilter('spot')">
-        <div class="fs-cat-dot" style="background:#3a5c40"></div>
+        <div class="fs-cat-dot" style="background:#a855f7"></div>
         <div class="fs-cat-name">Spots</div>
         <div class="fs-cat-count">${spotCount}</div>
         <div class="fs-check${spotOn?' on':''}">${spotOn?'✓':''}</div>
@@ -1163,19 +1163,19 @@ function rItinSidebar(){
     // Shopping group
     +'<div class="fs-section">'
     +'<div class="fs-cat" onclick="toggleItinGroupFilter()">'
-    +'<div class="fs-cat-dot" style="background:#576E54"></div>'
+    +'<div class="fs-cat-dot" style="background:#ff4e1a"></div>'
     +'<div class="fs-cat-name">Shopping</div>'
     +chk(shopOn,shopIndet)+'</div>'
     // Retail sub
     +'<div class="fs-sub">'
     +'<div class="fs-subcat" onclick="toggleItinFilter(String.fromCharCode(114,101,116,97,105,108))">'
-    +'<div class="fs-subcat-pip" style="background:#576E54"></div>'
+    +'<div class="fs-subcat-pip" style="background:#2e7eff"></div>'
     +'<div class="fs-subcat-name">Retail</div>'
     +schk(retailOn)+'</div>'
     +(retailOn?stopItems('retail',true):'')
     // Resell sub
     +'<div class="fs-subcat" onclick="toggleItinFilter(String.fromCharCode(114,101,115,101,108,108))">'
-    +'<div class="fs-subcat-pip" style="background:#DED6C4"></div>'
+    +'<div class="fs-subcat-pip" style="background:#ff4e1a"></div>'
     +'<div class="fs-subcat-name">Resell</div>'
     +schk(resellOn)+'</div>'
     +(resellOn?stopItems('resell',true):'')
@@ -1184,7 +1184,7 @@ function rItinSidebar(){
     // Food
     +'<div class="fs-section">'
     +'<div class="fs-cat" onclick="toggleItinFilter(String.fromCharCode(102,111,111,100))">'
-    +'<div class="fs-cat-dot" style="background:#7A9977"></div>'
+    +'<div class="fs-cat-dot" style="background:#ffaa00"></div>'
     +'<div class="fs-cat-name">Food</div>'
     +chk(foodOn,false)+'</div>'
     +(foodOn?stopItems('food',true):'')
@@ -1193,7 +1193,7 @@ function rItinSidebar(){
     // Spots
     +'<div class="fs-section">'
     +'<div class="fs-cat" onclick="toggleItinFilter(String.fromCharCode(115,112,111,116))">'
-    +'<div class="fs-cat-dot" style="background:#3a5c40"></div>'
+    +'<div class="fs-cat-dot" style="background:#a855f7"></div>'
     +'<div class="fs-cat-name">Spots</div>'
     +chk(spotOn,false)+'</div>'
     +(spotOn?stopItems('spot',true):'')
