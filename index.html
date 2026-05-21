@@ -114,7 +114,7 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:var
 .recap-panel{position:absolute;top:0;right:0;bottom:0;z-index:500;width:190px;background:rgba(22,22,22,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-left:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;padding:14px 0 0;touch-action:none;overscroll-behavior:contain;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1)}
 .recap-panel.open{transform:translateX(0)}
 @media(min-width:768px){.recap-panel{transform:translateX(0)}}
-.home-ranking-always{transform:translateX(0)!important}
+.home-ranking-always{transform:translateX(0)!important}.home-ranking-always.ranking-closed{transform:translateX(100%)!important}
 .recap-title{font-family:var(--fd);font-size:14px;letter-spacing:1.5px;color:var(--muted);padding:0 12px 10px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
 .recap-count{font-family:var(--fd);font-size:16px;color:var(--gold)}
 .recap-list{flex:1;overflow-y:scroll;padding:0 8px 12px;touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;min-height:0;position:relative}
@@ -456,6 +456,7 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:var
     </div>
     <div class="field"><label>Adresse (London)</label><input id="aa" placeholder="Ex: 80 Berwick St, Soho"></div>
     <div class="field"><label>Horaires</label><input id="ah" placeholder="Ex: 10h–19h"></div>
+    <div class="field"><label>Note / Commentaire</label><textarea id="anote" placeholder="Recommandé par Denn, ambiance, points forts..." style="width:100%;background:#111;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:var(--white);font-family:var(--fb);font-size:13px;resize:none;min-height:70px;outline:none"></textarea></div>
     <button class="msave" onclick="saveStop()">AJOUTER</button>
   </div>
 </div>
@@ -965,7 +966,7 @@ function saveStop(){
   if(addr){
     geocodeStop(s,function(s2){stops.push(s2);sv();rStops();rHomeMarkers();if(itinMap)rItinMarkers();});
   }else{stops.push(s);sv();rStops();}
-  ['an','aa','ah'].forEach(function(i){document.getElementById(i).value='';});
+  var anote=document.getElementById('anote');if(anote&&anote.value.trim()){s._initNote=anote.value.trim();}  ['an','aa','ah'].forEach(function(i){document.getElementById(i).value='';});if(anote)anote.value='';
   closeOv('add-ov');
 }
 
@@ -1577,16 +1578,12 @@ async function loadSnapshot(){
 function toggleHomeRanking(){
   const rp=document.getElementById('home-ranking-panel');
   if(!rp) return;
-  const isClosed=rp.style.transform==='translateX(100%)';
+  const isClosed=rp.classList.contains('ranking-closed');
   if(isClosed){
-    rp.style.transform='';
-    rp.addEventListener('touchstart',function(e){e.stopPropagation();},{passive:true});
-    rp.addEventListener('touchmove',function(e){e.stopPropagation();},{passive:true});
-    rp.addEventListener('wheel',function(e){e.stopPropagation();e.preventDefault();
-      var rl=rp.querySelector('.recap-list');if(rl)rl.scrollTop+=e.deltaY;},{passive:false});
+    rp.classList.remove('ranking-closed');
     rHomeRanking();
   } else {
-    rp.style.transform='translateX(100%)';
+    rp.classList.add('ranking-closed');
   }
 }
 
