@@ -739,7 +739,7 @@ function rHomeMarkers(){
   if(!homeMap)return;
   Object.values(homeMarkers).forEach(m=>homeMap.removeLayer(m));
   homeMarkers={};
-  stops.filter(s=>s.lat&&activeFilters.has(s.cat)).forEach(s=>{
+  stops.filter(s=>s.lat&&activeFilters.has(s.cat)&&notes[s.id]&&notes[s.id].score).forEach(s=>{
     const isDone=done.includes(s.id);
     const n=notes[s.id];
     const bg=isDone?'#576E54':CAT_COLOR[s.cat];
@@ -1349,6 +1349,7 @@ function itinDrop(id){
   manualOrder=arr;
   sv();
   rIlist();rRecap();rStops();
+  if(itinMap) rItinMarkers();
 }
 
 // ─── RECAP DRAG ───────────────────────────────────────────
@@ -1393,6 +1394,7 @@ function recapApplyDrop(targetId){
   manualOrder=arr;
   sv();
   rRecap();rIlist();rStops();
+  if(itinMap) rItinMarkers();
 }
 
 function recapTouchMove(e){
