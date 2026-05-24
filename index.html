@@ -166,7 +166,6 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:var
 .sb-name{font-family:var(--fd);font-size:19px;letter-spacing:1px}
 .sb-sc{font-family:var(--fd);font-size:34px;color:var(--gold);line-height:1}
 .sb-sc.na{color:#3a5c40}
-.sb-desc{font-size:10px;color:var(--muted);margin-bottom:9px}
 .sub-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:12px;cursor:pointer}
 .sub-row:last-child{border:none}
 .sub-n{color:var(--white);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}
@@ -576,18 +575,14 @@ function chkOpen(s){if(!s.hours||!/\d+h/.test(s.hours))return null;const m=s.hou
 function grpAvg(g){const v=stops.filter(s=>grp(s)===g).map(s=>notes[s.id]&&notes[s.id].score).filter(v=>v!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;}
 function fmt(v){return v!=null?v.toFixed(1)+'/10':'—';}
 function calcFinal(){
-  const shopAvg=grpAvg('shopping'),defi=crit['shopping_defi']?crit['shopping_defi'].score:null;
-  let shopping=null;
-  if(shopAvg!=null&&defi!=null)shopping=(shopAvg+defi)/2;
-  else if(shopAvg!=null)shopping=shopAvg;
-  else if(defi!=null)shopping=defi;
+  const shopAvg=grpAvg('shopping');
+  const shopping=shopAvg;
   const foodAvg=grpAvg('food');
   const sneakAchat=crit['sneakers_achat']?crit['sneakers_achat'].score:null;
   const sneakVente=crit['sneakers_vente']?crit['sneakers_vente'].score:null;
   const sneakI=(sneakAchat!=null&&sneakVente!=null)?(sneakAchat+sneakVente)/2:(sneakAchat??sneakVente);
-  const carteS=crit['carte']?crit['carte'].score:null;
-  const abonnes=crit['abonnes']?crit['abonnes'].score:null;
-  const all=[shopping,foodAvg,sneakI,carteS,abonnes].filter(v=>v!=null);
+  const activiteS=crit['activite']?crit['activite'].score:null;
+  const all=[shopping,foodAvg,sneakI,activiteS].filter(v=>v!=null);
   return all.length?all.reduce((a,b)=>a+b,0)/all.length:null;
 }
 function rTopAvg(){
@@ -996,11 +991,7 @@ function rScore(){
   const shopStops=stops.filter(function(s){return s.cat==='resell'||s.cat==='retail';});
   const shopVals=shopStops.map(function(s){return notes[s.id]&&notes[s.id].score;}).filter(function(v){return v!=null;});
   const shopAvg=shopVals.length?shopVals.reduce(function(a,b){return a+b;},0)/shopVals.length:null;
-  const defi=crit['shopping_defi']?crit['shopping_defi'].score:null;
-  let shopFinal=null;
-  if(shopAvg!=null&&defi!=null)shopFinal=(shopAvg+defi)/2;
-  else if(shopAvg!=null)shopFinal=shopAvg;
-  else if(defi!=null)shopFinal=defi;
+  const shopFinal=shopAvg;
 
   const foodStops=stops.filter(function(s){return s.cat==='food';});
   const foodVals=foodStops.map(function(s){return notes[s.id]&&notes[s.id].score;}).filter(function(v){return v!=null;});
@@ -1009,10 +1000,9 @@ function rScore(){
   const sneakAchat=crit['sneakers_achat']?crit['sneakers_achat'].score:null;
   const sneakVente=crit['sneakers_vente']?crit['sneakers_vente'].score:null;
   const sneakI=(sneakAchat!=null&&sneakVente!=null)?(sneakAchat+sneakVente)/2:(sneakAchat??sneakVente);
-  const carteS=crit['carte']?crit['carte'].score:null;
-  const abonnes=crit['abonnes']?crit['abonnes'].score:null;
+  const activiteS=crit['activite']?crit['activite'].score:null;
 
-  const allS=[shopFinal,foodAvg,sneakI,carteS,abonnes].filter(function(v){return v!=null;});
+  const allS=[shopFinal,foodAvg,sneakI,activiteS].filter(function(v){return v!=null;});
   const finalV=allS.length?allS.reduce(function(a,b){return a+b;},0)/allS.length:null;
   document.getElementById('final-val').textContent=finalV?finalV.toFixed(1)+'/10':'—';
   rTopAvg();
@@ -1044,29 +1034,20 @@ function rScore(){
   
   document.getElementById('score-body').innerHTML=
     '<div class="sblock"><div class="sb-hdr"><div><div class="sb-num">01 / 05</div><div class="sb-name">Shopping</div></div><div class="sb-sc'+(shopFinal==null?' na':'')+'">'+fmt(shopFinal)+'</div></div>'
-    +'<div class="sb-desc">Moyenne boutiques + Defi 300€</div>'
     +subRows(shopStops)
     +(shopAvg!=null?'<div class="avg-row"><div class="avg-l">Moy. boutiques</div><div class="avg-v">'+shopAvg.toFixed(1)+'/10</div></div>':'')
-    +manBlock('shopping_defi','Defi 300€','Resultat du defi, tenue trouvee…')+'</div>'
 
     +'<div class="sblock"><div class="sb-hdr"><div><div class="sb-num">02 / 05</div><div class="sb-name">Food</div></div><div class="sb-sc'+(foodAvg==null?' na':'')+'">'+fmt(foodAvg)+'</div></div>'
-    +'<div class="sb-desc">Moyenne de tes stops bouffe notes</div>'
     +(foodStops.length?subRows(foodStops):'<div style="font-size:11px;color:var(--muted);padding:4px 0">Ajoute des stops bouffe</div>')
     +(foodAvg!=null?'<div class="avg-row"><div class="avg-l">Moyenne</div><div class="avg-v">'+foodAvg.toFixed(1)+'/10</div></div>':'')+'</div>'
 
     +'<div class="sblock"><div class="sb-hdr"><div><div class="sb-num">03 / 05</div><div class="sb-name">Index Sneakers</div></div><div class="sb-sc'+(sneakI==null?' na':'')+'">'+fmt(sneakI)+'</div></div>'
-    +'<div class="sb-desc">Moyenne Achat LNF + Revente imposée</div>'
     +manBlock('sneakers_achat','Achat LNF /10','Prix trouvé vs prix marché…')
     +manBlock('sneakers_vente','Revente imposée /10','Offres reçues en shop…')
     +'</div>'
 
-    +'<div class="sblock"><div class="sb-hdr"><div><div class="sb-num">04 / 05</div><div class="sb-name">Carte Blanche</div></div><div class="sb-sc'+(carteS==null?' na':'')+'">'+fmt(carteS)+'</div></div>'
-    +'<div class="sb-desc">Demi-journee de SneakerDenn</div>'
-    +manBlock('carte','Note manuelle','Spots, restos, rencontres…')+'</div>'
-
-    +'<div class="sblock"><div class="sb-hdr"><div><div class="sb-num">05 / 05</div><div class="sb-name">Reco Abonnes</div></div><div class="sb-sc'+(abonnes==null?' na':'')+'">'+fmt(abonnes)+'</div></div>'
-    +'<div class="sb-desc">Activite niche votee par la communaute</div>'
-    +manBlock('abonnes','Note manuelle','Activite choisie, ressenti global…')+'</div>';
+    +'<div class="sblock"><div class="sb-hdr"><div><div class="sb-num">04 / 05</div><div class="sb-name">Activites</div></div><div class="sb-sc'+(activiteS==null?' na':'')+'">'+fmt(activiteS)+'</div></div>'
+    +manBlock('activite','Note manuelle','Carte blanche et activite niche...')+'</div>';
 }
 
 // initSliders called after score renders
@@ -1633,11 +1614,9 @@ function openCritPicker(key){
   _critKey=key;
   var cur=crit[key]?crit[key].score:null;
   document.getElementById('crit-pick-title').textContent=
-    key==='shopping_defi'?'Défi 300€':
     key==='sneakers_achat'?'Achat LNF':
     key==='sneakers_vente'?'Revente imposée':
-    key==='carte'?'Carte Blanche':
-    key==='abonnes'?'Reco Abonnés':'Note';
+    key==='activite'?'Activites':'Note';
   document.getElementById('crit-pick-display').textContent=cur!=null?cur+'/10':'—';
   var g='';
   for(var i=0.5;i<=10;i+=0.5){
