@@ -219,6 +219,15 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:var
 .pop-sc{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#ffd000}
 .pop-b{display:block;padding:6px 10px;background:#DED6C4;color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;width:100%;text-align:center;font-family:'DM Sans',sans-serif;margin-top:4px}
 .pop-b2{background:#2a2a2a;margin-top:4px}
+/* Spectator mode: no interaction */
+body.spectator-mode .add-btn,
+body.spectator-mode .ntap,
+body.spectator-mode .ck-btn,
+body.spectator-mode .dh,
+body.spectator-mode .recap-drag,
+body.spectator-mode .msave,
+body.spectator-mode .crit-score-tap { pointer-events:none!important; opacity:0.35!important; }
+body.spectator-mode [onclick="openAdd()"] { pointer-events:none!important; opacity:0.35!important; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -741,7 +750,7 @@ function rHomeMarkers(){
     const label=isDone&&n?n.score:(isDone?'v':'');
     const size=28;
     const icon=L.divIcon({
-      html:`<div style="width:${size}px;height:${size}px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:${isDone&&n?12:9}px;color:#fff;border:${isDone?'2px solid rgba(255,255,255,.35)':'1.5px solid rgba(255,255,255,.15)'};box-shadow:0 2px 8px rgba(0,0,0,.7)">${label}</div>`,
+      html:`<div style="width:${size}px;height:${size}px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:${isDone&&n?12:9}px;color:#fff;border:3px solid ${CAT_COLOR[s.cat]};box-shadow:0 2px 8px rgba(0,0,0,.7)">${label}</div>`,
       className:'',iconSize:[size,size],iconAnchor:[size/2,size/2]
     });
     const m=L.marker([s.lat,s.lng],{icon});
@@ -931,9 +940,9 @@ function dDrop(e,id){
   stops.splice(ti,0,stops.splice(fi,1)[0]);
   sv();rStops();
 }
-function togDone(id){done=done.includes(id)?done.filter(d=>d!==id):[...done,id];sv();rStops();rHome();}
+function togDone(id){ if(isSpectator) return; done=done.includes(id)?done.filter(d=>d!==id):[...done,id];sv();rStops();rHome();}
 
-function openAdd(){document.getElementById('add-ov').classList.remove('hide');}
+function openAdd(){ if(isSpectator) return; document.getElementById('add-ov').classList.remove('hide');}
 function closeOv(id){document.getElementById(id).classList.add('hide');}
 function cleanAddr(raw){
   // Extract plain address from Google Maps URLs or links
@@ -966,7 +975,7 @@ function saveStop(){
 }
 
 // ─── NOTES ───────────────────────────────────────────────
-function openNote(id){
+function openNote(id){ if(isSpectator) return;
   curNote=id;
   const s=stops.find(function(x){return x.id===id;}),n=notes[id]||{};
   document.getElementById('nmn').textContent=s.name;
@@ -979,8 +988,8 @@ function openNote(id){
   if(delBtn) delBtn.style.display=n.score?'block':'none';
   document.getElementById('note-ov').classList.remove('hide');
 }
-function pickN(n){document.querySelectorAll('.nmb').forEach(function(b){b.classList.toggle('on',parseFloat(b.textContent)===n);});document.getElementById('nmb').textContent=n+'/10';}
-function saveNote(){
+function pickN(n){ if(isSpectator) return;document.querySelectorAll('.nmb').forEach(function(b){b.classList.toggle('on',parseFloat(b.textContent)===n);});document.getElementById('nmb').textContent=n+'/10';}
+function saveNote(){ if(isSpectator) return;
   const s=document.querySelector('.nmb.on'),score=s?+s.textContent:null,comment=document.getElementById('nmt').value.trim();
   if(score){notes[curNote]={score:score,comment:comment,date:new Date().toLocaleDateString('fr-FR')};if(!done.includes(curNote))done.push(curNote);}
   sv();closeOv('note-ov');rStops();rScore();rTopAvg();rHome();if(itinMap)rItinMarkers();
@@ -1269,6 +1278,7 @@ function deleteNote(){
 }
 
 function deleteStop(id){
+  if(isSpectator) return;
   if(!confirm('Supprimer ce stop ?')) return;
   stops=stops.filter(function(s){return s.id!==id;});
   sel=sel.filter(function(x){return x!==id;});
@@ -1471,6 +1481,7 @@ function showSpectatorUI(){
   document.getElementById('home-panel').classList.add('on');
   document.querySelector('.nav').style.display='none';
   document.querySelector('.content').style.paddingBottom='';
+  document.body.classList.add('spectator-mode');
 }
 
 function specNav(p){
@@ -1610,7 +1621,7 @@ function rHomeRanking(){
 // ─── CRITERION PICKER ────────────────────────────────────────
 var _critKey=null;
 
-function openCritPicker(key){
+function openCritPicker(key){ if(isSpectator) return;
   _critKey=key;
   var cur=crit[key]?crit[key].score:null;
   document.getElementById('crit-pick-title').textContent=
@@ -1633,7 +1644,7 @@ function pickCrit(n){
   document.getElementById('crit-pick-display').textContent=n+'/10';
 }
 
-function saveCrit(){
+function saveCrit(){ if(isSpectator) return;
   var sel=document.querySelector('#crit-pick-grid .nmb.on');
   if(sel&&_critKey){
     uCrit(_critKey,+sel.textContent);
