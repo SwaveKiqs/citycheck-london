@@ -724,7 +724,7 @@ function rHome(){
   document.getElementById('home-stats').innerHTML=`
     <div class="hstat"><div class="hstat-v">${tot}</div><div class="hstat-l">Stops</div></div>
     <div class="hstat"><div class="hstat-v">${vis}</div><div class="hstat-l">Visités</div></div>
-    <div class="hstat"><div class="hstat-v">${shopA?shopA.toFixed(1)+'/10':'—'}</div><div class="hstat-l">Moy. shops</div></div>`;
+    <div class="hstat"><div class="hstat-v">${calcFinal()?calcFinal().toFixed(1)+'/10':'—'}</div><div class="hstat-l">Note finale</div></div>`;
   document.getElementById('prog-f').style.width=tot?(vis/tot*100)+'%':'0%';
   // Show warning for stops without GPS
   const noCoords=stops.filter(function(s){return !s.lat;});
