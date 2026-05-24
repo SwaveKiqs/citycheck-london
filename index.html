@@ -459,7 +459,7 @@ body.spectator-mode [onclick="openAdd()"] { pointer-events:none!important; opaci
         <option value="retail">Shopping — Retail</option>
         <option value="resell">Shopping — Resell</option>
         <option value="food">Food</option>
-        <option value="spot">Spot</option>
+        <option value="activite">Activite</option>
       </select>
     </div>
     <div class="field"><label>Adresse (London)</label><input id="aa" placeholder="Ex: 80 Berwick St, Soho"></div>
@@ -498,8 +498,8 @@ let isAdmin = false;
 let isSpectator = !isGuest; // default until auth checked
 
 // ─── DATA ────────────────────────────────────────────────
-const CAT_COLOR={resell:'#ff4e1a',retail:'#2e7eff',food:'#ffaa00',spot:'#a855f7'};
-const CAT_LABEL={resell:'Resell',retail:'Retail',food:'Food',spot:'Spot'};
+const CAT_COLOR={resell:'#ff4e1a',retail:'#2e7eff',food:'#ffaa00',activite:'#22c55e',spot:'#a855f7'};
+const CAT_LABEL={resell:'Resell',retail:'Retail',food:'Food',activite:'Activite',spot:'Spot'};
 // Groups for display
 const GRP={shopping:{label:'Shopping',color:'#cc4400'},food:{label:'Food',color:'#ff9900'},spot:{label:'Spots',color:'#8822ee'}};
 function grp(s){return(s.cat==='resell'||s.cat==='retail')?'shopping':s.cat;}
@@ -542,10 +542,10 @@ let homeMarkers={},itinMarkers={},routeLine=null,umark=null;
 let dragSrc=null;
 let sidebarOpen=false;
 let itinSidebarOpen=false;
-let activeItinFilters=new Set(['resell','retail','food','spot']);
+let activeItinFilters=new Set(['resell','retail','food','activite']);
 // Home map filters: which cats/subcats are visible
 // activeFilters = set of strings: 'resell','retail','food','spot'
-let activeFilters=new Set(['resell','retail','food','spot']);
+let activeFilters=new Set(['resell','retail','food','activite']);
 
 function sv(){
   var prefix=isGuest?'guest':'cc6';
@@ -590,7 +590,12 @@ function calcFinal(){
   const sneakAchat=crit['sneakers_achat']?crit['sneakers_achat'].score:null;
   const sneakVente=crit['sneakers_vente']?crit['sneakers_vente'].score:null;
   const sneakI=(sneakAchat!=null&&sneakVente!=null)?(sneakAchat+sneakVente)/2:(sneakAchat??sneakVente);
-  const activiteS=crit['activite']?crit['activite'].score:null;
+  // Activite stops feed into activiteS automatically
+  const activiteStops=stops.filter(function(s){return s.cat==='activite';});
+  const activiteVals=activiteStops.map(function(s){return notes[s.id]&&notes[s.id].score;}).filter(function(v){return v!=null;});
+  const activiteAvg=activiteVals.length?activiteVals.reduce(function(a,b){return a+b;},0)/activiteVals.length:null;
+  const activiteManual=crit['activite']?crit['activite'].score:null;
+  const activiteS=activiteAvg!=null?activiteAvg:(activiteManual!=null?activiteManual:null);
   const all=[shopping,foodAvg,sneakI,activiteS].filter(v=>v!=null);
   return all.length?all.reduce((a,b)=>a+b,0)/all.length:null;
 }
@@ -624,12 +629,11 @@ function rSidebar(){
   const shopOn=resellOn&&retailOn;
   const shopIndeterminate=resellOn!==retailOn;
   const foodOn=activeFilters.has('food');
-  const spotOn=activeFilters.has('spot');
-
-  const allOn=activeFilters.has('resell')&&activeFilters.has('retail')&&activeFilters.has('food')&&activeFilters.has('spot');
+  const activiteOn=activeFilters.has('activite');
+  const activiteCount=stops.filter(function(s){return s.cat==='activite';}).length;
+  const allOn=activeFilters.has('resell')&&activeFilters.has('retail')&&activeFilters.has('food')&&activeFilters.has('activite');
   const shoppingCount=stops.filter(s=>s.cat==='resell'||s.cat==='retail').length;
   const foodCount=stops.filter(s=>s.cat==='food').length;
-  const spotCount=stops.filter(s=>s.cat==='spot').length;
   const resellCount=stops.filter(s=>s.cat==='resell').length;
   const retailCount=stops.filter(s=>s.cat==='retail').length;
 
@@ -678,11 +682,11 @@ function rSidebar(){
     </div>
     <div class="fs-divider"></div>
     <div class="fs-section">
-      <div class="fs-cat" onclick="toggleFilter('spot')">
-        <div class="fs-cat-dot" style="background:#a855f7"></div>
-        <div class="fs-cat-name">Spots</div>
-        <div class="fs-cat-count">${spotCount}</div>
-        <div class="fs-check${spotOn?' on':''}">${spotOn?'✓':''}</div>
+      <div class="fs-cat" onclick="toggleFilter('activite')">
+        <div class="fs-cat-dot" style="background:#22c55e"></div>
+        <div class="fs-cat-name">Activite</div>
+        <div class="fs-cat-count">${activiteCount}</div>
+        <div class="fs-check${activiteOn?' on':''}">${activiteOn?'✓':''}</div>
       </div>
     </div>`;
 }
@@ -705,7 +709,7 @@ function toggleGroupFilter(group){
   rHomeMarkers();
 }
 function toggleSelectAll(){
-  const allOn=activeFilters.has('resell')&&activeFilters.has('retail')&&activeFilters.has('food')&&activeFilters.has('spot');
+  const allOn=activeFilters.has('resell')&&activeFilters.has('retail')&&activeFilters.has('food')&&activeFilters.has('activite');
   if(allOn){activeFilters.clear();}
   else{['resell','retail','food','spot'].forEach(c=>activeFilters.add(c));}
   rSidebar();
@@ -1009,7 +1013,12 @@ function rScore(){
   const sneakAchat=crit['sneakers_achat']?crit['sneakers_achat'].score:null;
   const sneakVente=crit['sneakers_vente']?crit['sneakers_vente'].score:null;
   const sneakI=(sneakAchat!=null&&sneakVente!=null)?(sneakAchat+sneakVente)/2:(sneakAchat??sneakVente);
-  const activiteS=crit['activite']?crit['activite'].score:null;
+  // Activite stops feed into activiteS automatically
+  const activiteStops=stops.filter(function(s){return s.cat==='activite';});
+  const activiteVals=activiteStops.map(function(s){return notes[s.id]&&notes[s.id].score;}).filter(function(v){return v!=null;});
+  const activiteAvg=activiteVals.length?activiteVals.reduce(function(a,b){return a+b;},0)/activiteVals.length:null;
+  const activiteManual=crit['activite']?crit['activite'].score:null;
+  const activiteS=activiteAvg!=null?activiteAvg:(activiteManual!=null?activiteManual:null);
 
   const allS=[shopFinal,foodAvg,sneakI,activiteS].filter(function(v){return v!=null;});
   const finalV=allS.length?allS.reduce(function(a,b){return a+b;},0)/allS.length:null;
@@ -1056,7 +1065,9 @@ function rScore(){
     +'</div>'
 
     +'<div class="sblock"><div class="sb-hdr"><div><div class="sb-num">04 / 05</div><div class="sb-name">Activites</div></div><div class="sb-sc'+(activiteS==null?' na':'')+'">'+fmt(activiteS)+'</div></div>'
-    +manBlock('activite','Note manuelle','Carte blanche et activite niche...')+'</div>';
+    +subRows(activiteStops)
+    +(activiteAvg!=null?'<div class="avg-row"><div class="avg-l">Moy. activites</div><div class="avg-v">'+activiteAvg.toFixed(1)+'/10</div></div>':'')
+    +manBlock('activite','Note manuelle si pas de stop','Carte blanche, activite niche...')+'</div>';
 }
 
 // initSliders called after score renders
